@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ItemSelectPage : MonoBehaviour
+public class ItemSelectPageUI : MonoBehaviour
 {
     public GameObject itemIconObject;
     public Image itemIcon;
@@ -10,7 +10,6 @@ public class ItemSelectPage : MonoBehaviour
     public TMP_Text itemStack;
     public TMP_Text itemDescription;
     public Button useButton;
-    public CanvasGroup canvasGroup;
     public string currentItemId;
 
     public void Awake()
@@ -34,8 +33,6 @@ public class ItemSelectPage : MonoBehaviour
         itemName.text = data.itemName;
         itemStack.text = data.stack.ToString();
         itemDescription.text = data.description;
-        canvasGroup.alpha = 1;
-        canvasGroup.interactable = true;
     }
 
     public void UseItem()

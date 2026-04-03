@@ -8,12 +8,12 @@ public class InventoryUI : MonoBehaviour
     public GameObject slotPrefab;
     public List<ItemSlotUI> itemSlotUIs;
 
-    public ItemSelectPage selectPage;
+    public ItemSelectPageUI selectPage;
 
     public void Start()
     {
         PlayerInventory.Instance.InventoryChangedAction += UpdateUI;
-        if (selectPage == null) selectPage = GetComponentInParent<ItemSelectPage>();
+        if (selectPage == null) selectPage = GetComponentInParent<ItemSelectPageUI>();
         if (gridLayout == null) gridLayout = GetComponentInChildren<GridLayoutGroup>();
     }
 

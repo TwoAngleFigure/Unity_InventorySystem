@@ -11,6 +11,7 @@ public class PlayerInventory : MonoBehaviour
     public Dictionary<string, ItemData> ItemInventory = new();
 
     public Action<ItemData[]> InventoryChangedAction;
+    public Action<bool> OnInventoryToggled;
     public bool inventoryToggleState = false;
 
     [Header("Input Action")]
@@ -97,6 +98,8 @@ public class PlayerInventory : MonoBehaviour
             UIView.alpha = 0;
             UIView.interactable = false;
         }
+
+        OnInventoryToggled?.Invoke(inventoryToggleState);
     }
 
     public ItemData GetItemData(string id)

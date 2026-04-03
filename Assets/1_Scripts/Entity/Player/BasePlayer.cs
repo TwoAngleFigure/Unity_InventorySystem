@@ -6,6 +6,7 @@ public class BasePlayer : BaseEntity
     [Header("Sub Systems")]
     private PlayerMovement _movement;
     private PlayerAttack _attack;
+    private PlayerInventory _inventory;
 
     public AnimationClip hitMotion;
     float _hitMotionTime;
@@ -30,11 +31,49 @@ public class BasePlayer : BaseEntity
         _hitMotionTime = hitMotion.length;
     }
 
+    private void Start()
+    {
+        _inventory = PlayerInventory.Instance;
+        if (_inventory == null)
+        {
+            _inventory = GetComponent<PlayerInventory>();
+        }
+
+        if (_inventory != null)
+        {
+            _inventory.OnInventoryToggled += HandleInventoryToggled;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_inventory != null)
+        {
+            _inventory.OnInventoryToggled -= HandleInventoryToggled;
+        }
+    }
+
+    private void HandleInventoryToggled(bool isInventoryOpen)
+    {
+        UpdateActionState();
+    }
+
     protected override void OnStateChanged(EntityState oldState, EntityState newState)
     {
-        bool canAct = (newState == EntityState.Alive);
-        _movement.SetCanMove(canAct);
-        _attack.SetCanAttack(canAct);
+        UpdateActionState();
+    }
+
+    private void UpdateActionState()
+    {
+        bool canAct = (State() == EntityState.Alive);
+
+        if (_inventory != null && _inventory.inventoryToggleState)
+        {
+            canAct = false;
+        }
+
+        if (_movement != null) _movement.SetCanMove(canAct);
+        if (_attack != null) _attack.SetCanAttack(canAct);
     }
 
     public override void OnHit(int damage)

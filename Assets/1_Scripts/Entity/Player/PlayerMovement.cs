@@ -61,6 +61,10 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        float _currentMaxSpeed = sprintAction.IsPressed() ? sprintMaxSpeed : warkMaxSpeed;
+        float _playerSpeed = playerRigi.linearVelocity.magnitude;
+        animator.SetFloat("Speed", _playerSpeed);
+        
         if (canMove)
         {
             Vector2 _input = moveAction.ReadValue<Vector2>();
@@ -75,9 +79,6 @@ public class PlayerMovement : MonoBehaviour
             Vector3 _moveDir = (_camForward * _input.y) + (_camRight * _input.x);
             moveVactor = new Vector2(_input.x, _input.y) * moveAcceleration;
 
-            float _currentMaxSpeed = sprintAction.IsPressed() ? sprintMaxSpeed : warkMaxSpeed;
-            float _playerSpeed = playerRigi.linearVelocity.magnitude;
-            animator.SetFloat("Speed", _playerSpeed);
 
             if (_moveDir.sqrMagnitude > 0.001f)
             {
