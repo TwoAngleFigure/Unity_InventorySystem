@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f7576df1510a574e9c2618d90501337, type: 3}
-  m_Name: ManaPotion
+  m_Name: Water
   m_EditorClassIdentifier: Assembly-CSharp::ItemDataOrigin
-  id: ManaPotion
-  itemName: ManaPotion
-  description: "\uB9C8\uB098 \uD3EC\uC158 \uC785\uB2C8\uB2E4."
+  id: Water
+  itemName: Water
+  description: "\uADF8\uB0E5 \uBB3C\uC785\uB2C8\uB2E4. \uC544\uBB34 \uD6A8\uACFC\uAC00
+    \uC5C6\uC2B5\uB2C8\uB2E4."
   prefab: {fileID: 0}
   icon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   effects: []
