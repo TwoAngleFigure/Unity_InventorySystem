@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class ItemSelectPageUI : MonoBehaviour
 {
-    public GameObject itemIconObject;
     public Image itemIcon;
     public TMP_Text itemName;
     public TMP_Text itemStack;
@@ -14,7 +13,6 @@ public class ItemSelectPageUI : MonoBehaviour
 
     public void Awake()
     {
-        if (itemIcon == null) itemIcon = itemIconObject.GetComponent<Image>();
         if (useButton == null) useButton = GetComponentInChildren<Button>();
         useButton.onClick.AddListener(UseItem);
     }

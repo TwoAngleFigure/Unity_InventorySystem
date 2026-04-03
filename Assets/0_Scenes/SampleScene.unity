@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 59839376}
   - component: {fileID: 59839375}
   m_Layer: 0
-  m_Name: HealingPotion (1)
+  m_Name: HealingPotion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -293,7 +293,7 @@ GameObject:
   - component: {fileID: 97506266}
   - component: {fileID: 97506265}
   m_Layer: 0
-  m_Name: HealingPotion (2)
+  m_Name: HealingPotion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -452,7 +452,7 @@ GameObject:
   - component: {fileID: 117888514}
   - component: {fileID: 117888513}
   m_Layer: 0
-  m_Name: ManaPotion
+  m_Name: Water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -803,7 +803,7 @@ GameObject:
   - component: {fileID: 212819880}
   - component: {fileID: 212819879}
   m_Layer: 0
-  m_Name: ManaPotion
+  m_Name: Water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -956,11 +956,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 274011352}
-  - component: {fileID: 274011351}
-  - component: {fileID: 274011350}
   - component: {fileID: 274011348}
   - component: {fileID: 274011353}
   - component: {fileID: 274011349}
+  - component: {fileID: 274011351}
+  - component: {fileID: 274011350}
   m_Layer: 0
   m_Name: HealingPotion
   m_TagString: Untagged
@@ -1552,8 +1552,8 @@ GameObject:
   - component: {fileID: 414867191}
   - component: {fileID: 414867194}
   - component: {fileID: 414867193}
-  - component: {fileID: 414867192}
   - component: {fileID: 414867195}
+  - component: {fileID: 414867196}
   m_Layer: 5
   m_Name: ItemSelectPage
   m_TagString: Untagged
@@ -1586,26 +1586,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -230}
   m_SizeDelta: {x: 300, y: 200}
   m_Pivot: {x: 0.5, y: 0}
---- !u!114 &414867192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 414867190}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7e0fe9009a25b74084fa6fbb63a41d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  itemIconObject: {fileID: 326624639}
-  itemIcon: {fileID: 0}
-  itemName: {fileID: 461743925}
-  itemStack: {fileID: 623646207}
-  itemDescription: {fileID: 1021739913}
-  useButton: {fileID: 0}
-  canvasGroup: {fileID: 0}
-  currentItemId: 
 --- !u!114 &414867193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1656,6 +1636,24 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &414867196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 414867190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6cabeb54b4357d4bb87953da725fef2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemSelectPageUI
+  itemIcon: {fileID: 326624641}
+  itemName: {fileID: 461743925}
+  itemStack: {fileID: 623646207}
+  itemDescription: {fileID: 1021739913}
+  useButton: {fileID: 1572411850}
+  currentItemId: 
 --- !u!1 &461743923
 GameObject:
   m_ObjectHideFlags: 0
@@ -1952,7 +1950,7 @@ GameObject:
   - component: {fileID: 716328367}
   - component: {fileID: 716328366}
   m_Layer: 0
-  m_Name: ManaPotion
+  m_Name: Water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2671,7 +2669,7 @@ GameObject:
   - component: {fileID: 1034432231}
   - component: {fileID: 1034432230}
   m_Layer: 0
-  m_Name: HealingPotion (3)
+  m_Name: HealingPotion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3368,7 +3366,7 @@ GameObject:
   - component: {fileID: 1541124201}
   - component: {fileID: 1541124200}
   m_Layer: 0
-  m_Name: ManaPotion
+  m_Name: Water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4350,7 +4348,7 @@ MonoBehaviour:
   gridLayout: {fileID: 0}
   slotPrefab: {fileID: 3255782131336048098, guid: ac42c9142759fda4885a0b3ef7d04af9, type: 3}
   itemSlotUIs: []
-  selectPage: {fileID: 414867192}
+  selectPage: {fileID: 414867196}
 --- !u!4 &13335215004808827
 Transform:
   m_ObjectHideFlags: 0
@@ -6295,8 +6293,8 @@ GameObject:
   - component: {fileID: 2049898193}
   - component: {fileID: 7929906376093298573}
   - component: {fileID: 7929906376093298572}
-  - component: {fileID: 2049898192}
   - component: {fileID: 7929906376093298574}
+  - component: {fileID: 2049898192}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
