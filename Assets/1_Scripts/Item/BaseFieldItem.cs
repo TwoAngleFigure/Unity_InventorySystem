@@ -14,9 +14,11 @@ public class BaseFieldItem : MonoBehaviour
             ItemDataTemplate.itemName,
             ItemDataTemplate.description,
             1,
+            ItemDataTemplate.itemType,
             ItemDataTemplate.icon,
             ItemDataTemplate.effects
             );
+        gameObject.name = ItemData.itemName;
     }
 
     public void OnTriggerEnter(Collider other)

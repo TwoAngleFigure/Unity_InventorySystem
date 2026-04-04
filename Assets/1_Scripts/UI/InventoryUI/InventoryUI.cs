@@ -1,55 +1,107 @@
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
-    public GridLayoutGroup gridLayout;
+    [Header("Item Slot")]
     public GameObject slotPrefab;
-    public List<ItemSlotUI> itemSlotUIs;
+    private GridLayoutGroup slotParent;
+    private List<ItemSlotUI> itemSlotUIs = new();
 
-    public ItemSelectPageUI selectPage;
+    [Header("Sorting")]
+    public SortingType currentSortingType = SortingType.TimeAscending;
+    public TMP_Dropdown sortDropdown;
+
+    [Header("Item Select Page")]
+    private ItemSelectPageUI itemSelectPage;
 
     public void Start()
     {
         PlayerInventory.Instance.InventoryChangedAction += UpdateUI;
-        if (selectPage == null) selectPage = GetComponentInParent<ItemSelectPageUI>();
-        if (gridLayout == null) gridLayout = GetComponentInChildren<GridLayoutGroup>();
+
+        if (slotParent == null) slotParent = GetComponentInChildren<GridLayoutGroup>();
+
+        if (itemSelectPage == null) itemSelectPage = GetComponentInChildren<ItemSelectPageUI>();
+        itemSelectPage.SetButtonEvent(() => PlayerInventory.Instance.RemoveItem(itemSelectPage.GetCurrentItemData().id));
+
+        if (sortDropdown == null) sortDropdown = GetComponentInChildren<TMP_Dropdown>();
+        sortDropdown.value = (int)currentSortingType;
+        sortDropdown.onValueChanged.AddListener(OnSortDropdownValueChanged);
+
     }
 
-    public void UpdateUI(ItemData[] list)
+    public void UpdateUI(ItemData[] itemDatas)
     {
-        for (int i = 0; i < list.Length; i++)
+        itemDatas = SortItemDatas(itemDatas);
+
+        //itemDatas 개수 만큼 SlotUI 활성화
+        for (int i = 0; i < itemDatas.Length; i++)
         {
-            string itemId = list[i].id;
             if (i >= itemSlotUIs.Count)
             {
-                itemSlotUIs.Add(CreateNewItemSlot(itemId, list[i].icon, list[i].stack.ToString()));
+                itemSlotUIs.Add(CreateNewItemSlot());
             }
 
-            ItemSlotUI slot = itemSlotUIs[i];
-            slot.gameObject.SetActive(true);
-            slot.SetData(itemId, list[i].icon, list[i].stack.ToString());
-            slot.button.onClick.RemoveAllListeners();
-            slot.button.onClick.AddListener(() => selectPage.SetSelectPage(itemId));
+            ItemData currentItem = itemDatas[i]; //람다 클로저 변수 캡처 -> 없으면 IndexOutOfRangeException
+            itemSlotUIs[i].ActiveSlot(currentItem, () => itemSelectPage.SetItemData(currentItem));
         }
 
-        for (int i = list.Length; i < itemSlotUIs.Count; i++)
+        //남은 SlotUI 비활성화
+        for (int i = itemDatas.Length; i < itemSlotUIs.Count; i++)
         {
-            itemSlotUIs[i].gameObject.SetActive(false);
+            itemSlotUIs[i].DesableSlot();
         }
 
-        if (!string.IsNullOrEmpty(selectPage.currentItemId))
-        {
-            selectPage.SetSelectPage(selectPage.currentItemId);
-        }
+        itemSelectPage.IsSelectItem();
     }
 
-    public ItemSlotUI CreateNewItemSlot(string itemId, Sprite newIcon, string newStack)
+    public ItemSlotUI CreateNewItemSlot()
     {
         ItemSlotUI newSlot = Instantiate(slotPrefab).GetComponent<ItemSlotUI>();
-        newSlot.transform.SetParent(gridLayout.gameObject.transform, false);
-        newSlot.SetData(itemId, newIcon, newStack);
+        newSlot.transform.SetParent(slotParent.gameObject.transform, false);
         return newSlot;
     }
+
+    public void OnSortDropdownValueChanged(int index)
+    {
+        currentSortingType = (SortingType)index;
+        if (PlayerInventory.Instance != null && PlayerInventory.Instance.ItemInventory != null)
+        {
+            UpdateUI(PlayerInventory.Instance.ItemInventory.Values.ToArray());
+        }
+    }
+
+    private ItemData[] SortItemDatas(ItemData[] itemDatas)
+    {
+        switch (currentSortingType)
+        {
+            case SortingType.TimeAscending:
+                return itemDatas;
+            case SortingType.TimeDescending:
+                return itemDatas.Reverse().ToArray();
+            case SortingType.NameAscending:
+                return itemDatas.OrderBy(x => x.itemName).ToArray();
+            case SortingType.NameDescending:
+                return itemDatas.OrderByDescending(x => x.itemName).ToArray();
+            case SortingType.StackAscending:
+                return itemDatas.OrderBy(x => x.stack).ToArray();
+            case SortingType.StackDescending:
+                return itemDatas.OrderByDescending(x => x.stack).ToArray();
+            default:
+                return itemDatas;
+        }
+    }
+}
+
+public enum SortingType
+{
+    TimeAscending,
+    TimeDescending,
+    NameAscending,
+    NameDescending,
+    StackAscending,
+    StackDescending,
 }

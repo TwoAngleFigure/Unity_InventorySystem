@@ -6,16 +6,18 @@ public class ItemData
     public string itemName;
     public string description;
     public int stack;
+    public ItemType type;
 
     public Sprite icon;
     public EffectData[] effects;
 
-    public ItemData(string id, string itemName, string description, int stack, Sprite icon, EffectData[] effects)
+    public ItemData(string id, string itemName, string description, int stack, ItemType type, Sprite icon, EffectData[] effects)
     {
         this.id = id;
         this.itemName = itemName;
         this.description = description;
         this.stack = stack;
+        this.type = type;
         this.icon = icon;
         this.effects = effects;
     }
