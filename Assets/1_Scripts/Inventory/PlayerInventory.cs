@@ -8,7 +8,6 @@ public class PlayerInventory : MonoBehaviour
 {
     public CanvasGroup UIView;
 
-    public Dictionary<string, Currency> currencyInventory;
     public Dictionary<string, ItemData> ItemInventory = new();
 
     public Action<ItemData[]> InventoryChangedAction;
