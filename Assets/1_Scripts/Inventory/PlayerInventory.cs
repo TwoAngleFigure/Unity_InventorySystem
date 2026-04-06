@@ -8,12 +8,10 @@ public class PlayerInventory : MonoBehaviour
 {
     #region Field
     [Header("Datas")]
-    private Dictionary<string, Currency> _currencyInventory = new();
     private Dictionary<string, ItemData> _itemInventory = new();
 
     [Header("Action")]
     //Database Changed
-    public Action<Currency[]> CurrencyChangedAction;
     public Action<ItemData[]> InventoryChangedAction;
     //Toggle State Changed
     public Action<bool> OnInventoryToggled;
@@ -27,7 +25,6 @@ public class PlayerInventory : MonoBehaviour
 
     [Header("Getter")]
     public static PlayerInventory Instance { get; private set; }
-    public Currency[] CurrencyInventory => _currencyInventory.Values.ToArray();
     public ItemData[] ItemInventory => _itemInventory.Values.ToArray();
     public bool InventoryToggleState { get; private set; }
     #endregion
@@ -43,8 +40,6 @@ public class PlayerInventory : MonoBehaviour
         _InventoryAction = new();
         _InventoryToggleAction = _InventoryAction.Player.Inventory;
         SetInventoryUIState(InventoryToggleState);
-
-        CurrencyChangedAction?.Invoke(_currencyInventory.Values.ToArray());
     }
 
     private void OnEnable()
@@ -57,29 +52,6 @@ public class PlayerInventory : MonoBehaviour
     {
         _InventoryToggleAction.performed -= OnInventoryToggle;
         _InventoryAction.Disable();
-    }
-    #endregion
-
-    #region Currency Database
-    public void AddCurrency(string name, int count)
-    {
-        _currencyInventory.TryGetValue(name, out Currency targetCurrency);
-        targetCurrency.AddCount(count);
-        CurrencyChangedAction?.Invoke(new[] { targetCurrency });
-    }
-
-    public bool RemoveCurrency(string name, int count)
-    {
-        if (!_currencyInventory.TryGetValue(name, out Currency targetCurrency)) return false; 
-        if (!targetCurrency.RemoveCount(count)) return false;
-
-        CurrencyChangedAction?.Invoke(new[] { targetCurrency });
-        return true;
-    }
-
-    public void SetCurrencyData(Currency currency)
-    {
-        _currencyInventory.Add(currency.currencyType.ToString(), currency);
     }
     #endregion
 
