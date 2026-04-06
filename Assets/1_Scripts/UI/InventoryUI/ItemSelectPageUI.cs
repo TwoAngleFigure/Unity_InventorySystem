@@ -12,9 +12,9 @@ public class ItemSelectPageUI : MonoBehaviour
     public TMP_Text itemDescription;
     public Button useButton;
 
-    public ItemData currentItemData;
+    private string currentItemId;
 
-    public ItemData GetCurrentItemData() { return currentItemData; }
+    public string CurrentItemId => currentItemId;
 
     public void Awake()
     {
@@ -22,48 +22,40 @@ public class ItemSelectPageUI : MonoBehaviour
         if (useButton == null) useButton = GetComponentInChildren<Button>();
     }
 
-    public void ActiveSelectPage()
+    public void ActiveSelectPage(string itemId, Sprite icon, string nameText, string countText, string priceText,string descText, bool showUseBtn)
     {
-        if (currentItemData == null) return;
-        if (currentItemData.stack <= 0)
+        currentItemId = itemId;
+
+        if (itemIcon != null) itemIcon.sprite = icon;
+        if (itemName != null) itemName.text = nameText;
+        if (itemStack != null && itemStack.CompareTag("Stack")) itemStack.text = countText;
+        if (itemStack != null && itemStack.CompareTag("Price")) itemStack.text = priceText;
+        if (itemDescription != null) itemDescription.text = descText;
+        if (useButton != null) useButton.gameObject.SetActive(showUseBtn);
+
+        if (canvasGroup != null)
         {
-            DisableSelectPage();
-            return;
+            canvasGroup.alpha = 1;
+            canvasGroup.interactable = true;
         }
-        if(currentItemData.type == ItemType.UseAble) useButton.gameObject.SetActive(true);
-        else useButton.gameObject.SetActive(false);
-
-        itemIcon.sprite = currentItemData.icon;
-        itemName.text = currentItemData.itemName;
-        itemStack.text = currentItemData.stack.ToString();
-        itemDescription.text = currentItemData.description;
-
-        canvasGroup.alpha = 1;
-        canvasGroup.interactable = true;
     }
 
     public void DisableSelectPage()
     {
-        currentItemData = null;
-        canvasGroup.alpha = 0;
-        canvasGroup.interactable = false;
+        currentItemId = string.Empty;
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 0;
+            canvasGroup.interactable = false;
+        }
     }
 
     public void SetButtonEvent(UnityAction call)
     {
-        useButton.onClick.RemoveAllListeners();
-        useButton.onClick.AddListener(call);
-    }
-
-    public void SetItemData(ItemData itemData)
-    {
-        currentItemData = itemData;
-        IsSelectItem();
-    }
-
-    public bool IsSelectItem()
-    {
-        if (currentItemData == null) { DisableSelectPage(); return false; }
-        else { ActiveSelectPage(); return true; }
+        if (useButton != null)
+        {
+            useButton.onClick.RemoveAllListeners();
+            useButton.onClick.AddListener(call);
+        }
     }
 }

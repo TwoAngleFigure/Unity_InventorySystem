@@ -6,34 +6,53 @@ using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
+    [Header("Currency")]
+    public GameObject currencySlotPrefab;
+    private Dictionary<string, CurrencySlotUI> currencySlotUI = new();
+
     [Header("Item Slot")]
-    public GameObject slotPrefab;
+    public GameObject itemSlotPrefab;
     private GridLayoutGroup slotParent;
     private List<ItemSlotUI> itemSlotUIs = new();
 
     [Header("Sorting")]
     public SortingType currentSortingType = SortingType.TimeAscending;
-    public TMP_Dropdown sortDropdown;
+    private TMP_Dropdown sortDropdown;
 
     [Header("Item Select Page")]
     private ItemSelectPageUI itemSelectPage;
 
     public void Start()
     {
-        PlayerInventory.Instance.InventoryChangedAction += UpdateUI;
+        PlayerInventory.Instance.CurrencyChangedAction += UpdateCurrencyUI;
+        PlayerInventory.Instance.InventoryChangedAction += UpdateItemUI;
+
+        foreach (var slot in GetComponentsInChildren<CurrencySlotUI>())
+            currencySlotUI.Add(slot.currencyId, slot);
 
         if (slotParent == null) slotParent = GetComponentInChildren<GridLayoutGroup>();
-
-        if (itemSelectPage == null) itemSelectPage = GetComponentInChildren<ItemSelectPageUI>();
-        itemSelectPage.SetButtonEvent(() => PlayerInventory.Instance.RemoveItem(itemSelectPage.GetCurrentItemData().id));
 
         if (sortDropdown == null) sortDropdown = GetComponentInChildren<TMP_Dropdown>();
         sortDropdown.value = (int)currentSortingType;
         sortDropdown.onValueChanged.AddListener(OnSortDropdownValueChanged);
 
+        if (itemSelectPage == null) itemSelectPage = GetComponentInChildren<ItemSelectPageUI>();
+        itemSelectPage.SetButtonEvent(() => PlayerInventory.Instance.UseItem(itemSelectPage.CurrentItemId));
     }
 
-    public void UpdateUI(ItemData[] itemDatas)
+    #region Currency UI
+    public void UpdateCurrencyUI(Currency[] currencyDatas)
+    {
+        foreach (Currency currencyData in currencyDatas)
+        {
+            currencySlotUI.TryGetValue(currencyData.currencyType.ToString(), out CurrencySlotUI slot);
+            slot.UpdateUI(currencyData.Count);
+        }
+    }
+    #endregion
+
+    #region Item UI
+    public void UpdateItemUI(ItemData[] itemDatas)
     {
         itemDatas = SortItemDatas(itemDatas);
 
@@ -45,22 +64,62 @@ public class InventoryUI : MonoBehaviour
                 itemSlotUIs.Add(CreateNewItemSlot());
             }
 
-            ItemData currentItem = itemDatas[i]; //람다 클로저 변수 캡처 -> 없으면 IndexOutOfRangeException
-            itemSlotUIs[i].ActiveSlot(currentItem, () => itemSelectPage.SetItemData(currentItem));
+            //버튼 클릭 시 SelectPage 갱신 리스너 등록
+            ItemData currentItem = itemDatas[i];
+            itemSlotUIs[i].ActiveSlot(currentItem.icon, currentItem.count.ToString(), () =>
+            {
+                itemSelectPage.ActiveSelectPage(
+                    currentItem.id,
+                    currentItem.icon,
+                    currentItem.itemName,
+                    currentItem.count.ToString(),
+                    currentItem.value.ToString(),
+                    currentItem.description,
+                    currentItem.type == ItemType.UseAble
+                );
+            });
         }
 
-        //남은 SlotUI 비활성화
         for (int i = itemDatas.Length; i < itemSlotUIs.Count; i++)
         {
             itemSlotUIs[i].DesableSlot();
         }
 
-        itemSelectPage.IsSelectItem();
+        RefreshItemSelectPage();
+    }
+
+    private void RefreshItemSelectPage()
+    {
+        string selectedId = itemSelectPage.CurrentItemId;
+
+        if (string.IsNullOrEmpty(selectedId))
+        {
+            itemSelectPage.DisableSelectPage();
+            return;
+        }
+
+        ItemData currentSelected = PlayerInventory.Instance.GetItemData(selectedId);
+
+        if (currentSelected == null && currentSelected.count <= 0)
+        {
+            itemSelectPage.DisableSelectPage();
+            return;
+        }
+
+        itemSelectPage.ActiveSelectPage(
+            currentSelected.id,
+            currentSelected.icon,
+            currentSelected.itemName,
+            currentSelected.count.ToString(),
+            currentSelected.value.ToString(),
+            currentSelected.description,
+            currentSelected.type == ItemType.UseAble
+        );
     }
 
     public ItemSlotUI CreateNewItemSlot()
     {
-        ItemSlotUI newSlot = Instantiate(slotPrefab).GetComponent<ItemSlotUI>();
+        ItemSlotUI newSlot = Instantiate(itemSlotPrefab).GetComponent<ItemSlotUI>();
         newSlot.transform.SetParent(slotParent.gameObject.transform, false);
         return newSlot;
     }
@@ -68,9 +127,9 @@ public class InventoryUI : MonoBehaviour
     public void OnSortDropdownValueChanged(int index)
     {
         currentSortingType = (SortingType)index;
-        if (PlayerInventory.Instance != null && PlayerInventory.Instance.ItemInventory != null)
+        if (PlayerInventory.Instance != null)
         {
-            UpdateUI(PlayerInventory.Instance.ItemInventory.Values.ToArray());
+            UpdateItemUI(PlayerInventory.Instance.ItemInventory);
         }
     }
 
@@ -87,13 +146,14 @@ public class InventoryUI : MonoBehaviour
             case SortingType.NameDescending:
                 return itemDatas.OrderByDescending(x => x.itemName).ToArray();
             case SortingType.StackAscending:
-                return itemDatas.OrderBy(x => x.stack).ToArray();
+                return itemDatas.OrderBy(x => x.count).ToArray();
             case SortingType.StackDescending:
-                return itemDatas.OrderByDescending(x => x.stack).ToArray();
+                return itemDatas.OrderByDescending(x => x.count).ToArray();
             default:
                 return itemDatas;
         }
     }
+    #endregion
 }
 
 public enum SortingType

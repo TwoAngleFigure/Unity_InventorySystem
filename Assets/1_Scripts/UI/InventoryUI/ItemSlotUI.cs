@@ -5,30 +5,47 @@ using UnityEngine.UI;
 
 public class ItemSlotUI : MonoBehaviour
 {
-    public Image icon;
-    public TMP_Text stackText;
+    public Image _icon;
+    public TMP_Text _stackText;
     public Button button;
     public CanvasGroup canvasGroup;
 
+    private bool _initialized = false;
+
     public void Awake()
     {
-        if (icon == null) icon = GetComponentInChildren<Image>();
-        if (stackText == null) stackText = GetComponentInChildren<TextMeshPro>();
-        if (button == null) button = GetComponentInChildren<Button>();
-        if (canvasGroup == null) canvasGroup = GetComponentInChildren<CanvasGroup>();
+        EnsureInitialized();
     }
 
-    public void ActiveSlot(ItemData itemData, UnityAction call)
+    private void EnsureInitialized()
     {
+        if (_initialized) return;
+        if (_icon == null)
+            foreach (Image img in GetComponentsInChildren<Image>())
+                if (img.gameObject != gameObject)
+                    _icon =  img;
+        if (_stackText == null) _stackText = GetComponentInChildren<TMP_Text>();
+        if (button == null) button = GetComponentInChildren<Button>();
+        if (canvasGroup == null) canvasGroup = GetComponentInChildren<CanvasGroup>();
+        _initialized = true;
+    }
+
+    public void ActiveSlot(Sprite icon, string text, UnityAction call)
+    {
+        EnsureInitialized();
+
         canvasGroup.alpha = 1;
         canvasGroup.interactable = true;
-        icon.sprite = itemData.icon;
-        stackText.text = itemData.stack.ToString();
+        _icon.sprite = icon;
+        _stackText.text = text;
+        button.onClick.RemoveAllListeners();
         button.onClick.AddListener(call);
     }
 
     public void DesableSlot()
     {
+        EnsureInitialized();
+
         canvasGroup.alpha = 0;
         canvasGroup.interactable = false;
         button.onClick.RemoveAllListeners();

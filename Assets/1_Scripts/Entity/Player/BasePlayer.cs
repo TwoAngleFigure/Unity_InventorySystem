@@ -67,7 +67,7 @@ public class BasePlayer : BaseEntity
     {
         bool canAct = (State() == EntityState.Alive);
 
-        if (_inventory != null && _inventory.inventoryToggleState)
+        if (_inventory != null && _inventory.InventoryToggleState)
         {
             canAct = false;
         }

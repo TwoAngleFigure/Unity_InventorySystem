@@ -13,6 +13,7 @@ public class BaseFieldItem : MonoBehaviour
             ItemDataTemplate.id,
             ItemDataTemplate.itemName,
             ItemDataTemplate.description,
+            ItemDataTemplate.value,
             1,
             ItemDataTemplate.itemType,
             ItemDataTemplate.icon,
